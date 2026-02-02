@@ -1,0 +1,79 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema modelo_lavanderia
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema modelo_lavanderia
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `modelo_lavanderia` DEFAULT CHARACTER SET utf8 ;
+USE `modelo_lavanderia` ;
+
+-- -----------------------------------------------------
+-- Table `modelo_lavanderia`.`cliente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `modelo_lavanderia`.`cliente` (
+  `cliente_nome` VARCHAR(90) NOT NULL,
+  `cliente_cpf` VARCHAR(14) NOT NULL,
+  `cliente_contato` VARCHAR(14) NOT NULL,
+  PRIMARY KEY (`cliente_cpf`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `modelo_lavanderia`.`loja`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `modelo_lavanderia`.`loja` (
+  `nome_item` VARCHAR(45) NOT NULL,
+  `estoque` INT NOT NULL,
+  `preço` INT NOT NULL,
+  PRIMARY KEY (`nome_item`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `modelo_lavanderia`.`maquina_lavar`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `modelo_lavanderia`.`maquina_lavar` (
+  `maquina_numero` INT NOT NULL,
+  `maquina_tipo` VARCHAR(20) NOT NULL,
+  `maquina_capacidade` INT NOT NULL,
+  `maquina_disponibilidade` BIT(1) NOT NULL,
+  `maquina_preço` INT NOT NULL,
+  PRIMARY KEY (`maquina_numero`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `modelo_lavanderia`.`agendamento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `modelo_lavanderia`.`agendamento` (
+  `idagendamento` INT NOT NULL,
+  `maquina_numero` INT NOT NULL,
+  `cliente_cpf` VARCHAR(14) NOT NULL,
+  `agendamento_data` DATETIME NOT NULL,
+  `agendamento_preço` INT NOT NULL,
+  PRIMARY KEY (`idagendamento`, `maquina_numero`, `cliente_cpf`),
+  INDEX `fk_agendamento_maquina_lavar_idx` (`maquina_numero` ASC) VISIBLE,
+  INDEX `fk_agendamento_cliente1_idx` (`cliente_cpf` ASC) VISIBLE,
+  CONSTRAINT `fk_agendamento_maquina_lavar`
+    FOREIGN KEY (`maquina_numero`)
+    REFERENCES `modelo_lavanderia`.`maquina_lavar` (`maquina_numero`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_agendamento_cliente1`
+    FOREIGN KEY (`cliente_cpf`)
+    REFERENCES `modelo_lavanderia`.`cliente` (`cliente_cpf`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
